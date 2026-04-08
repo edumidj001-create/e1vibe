@@ -10,7 +10,6 @@ import './index.css';
 
 function App() {
   const [session, setSession] = useState(null);
-  const [profile, setProfile] = useState(null);
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,31 +49,11 @@ function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (!session) {
-        setProfile(null);
-      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (!session) return;
-
-    async function loadProfile() {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
-      
-      if (!error) {
-        setProfile(data);
-      }
-    }
-
-    loadProfile();
-  }, [session]);
 
   useEffect(() => {
     if (!session) return;
